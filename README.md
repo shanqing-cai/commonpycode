@@ -1,4 +1,4 @@
 commonpycode
 ============
 
-Python code used in various project
+Shared Python code used in various projects
