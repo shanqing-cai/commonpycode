@@ -64,8 +64,9 @@ def delete_file_if_exists(fn):
         if os.path.isfile(fn):
             raise Exception, "Failed to remove file: %s" % fn
 
-def t = read_text_file(txtfn):
+def read_text_file(txtfn):
     txtf = open(txtfn, "rt")
     t = txtf.read().split("\n")
     txtf.close()
 
+    return t
