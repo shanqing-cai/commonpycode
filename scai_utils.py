@@ -70,3 +70,10 @@ def read_text_file(txtfn):
     txtf.close()
 
     return t
+
+def cmd_stdout(cmd):
+    from subprocess import Popen, PIPE
+    
+    (sout, serr) = Popen(cmd.split(" "), stdout=PIPE, stderr=PIPE)\
+                   .communicate()
+    return (sout, serr)
