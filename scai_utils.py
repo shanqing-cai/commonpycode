@@ -71,6 +71,14 @@ def read_text_file(txtfn):
 
     return t
 
+
+def write_list_to_text_file(tlist, txtfn):
+    txtf = open(txtfn, "wt")
+    for (i0, tline) in enumerate(tlist):
+        txtf.write("%s\n" % tline)
+    txtf.close()
+
+
 def cmd_stdout(cmd):
     from subprocess import Popen, PIPE
     
