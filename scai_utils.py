@@ -58,11 +58,16 @@ def check_dir(dn, bCreate=False):
             else:
                 print("INFO: Created directory: %s"%dn)
 
-def delete_file_if_exists(fn):
+def delete_file_if_exists(fn, recursive=False):
     if os.path.isfile(fn):
-        os.system("rm -f %s" % fn)
+        if not recursive:
+            os.system("rm -f %s" % fn)
+        else:
+            os.system("rm -rf %s" % fn)
+            
         if os.path.isfile(fn):
             raise Exception, "Failed to remove file: %s" % fn
+
 
 def read_text_file(txtfn):
     txtf = open(txtfn, "rt")
