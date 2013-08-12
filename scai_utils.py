@@ -58,6 +58,8 @@ def check_dir(dn, bCreate=False):
             else:
                 print("INFO: Created directory: %s"%dn)
 
+
+
 def delete_file_if_exists(fn, recursive=False):
     if os.path.isfile(fn):
         if not recursive:
@@ -90,3 +92,15 @@ def cmd_stdout(cmd):
     (sout, serr) = Popen(cmd.split(" "), stdout=PIPE, stderr=PIPE)\
                    .communicate()
     return (sout, serr)
+
+
+def check_bin_path(bfn):
+    (tpath, se) = cmd_stdout("which %s" % bfn)
+    assert(len(se) == 0)
+    
+    if len(tpath) == 0:
+        raise Exception, "Cannot find the path to program: %s" % bfn
+
+    return tpath
+
+           
