@@ -24,3 +24,15 @@ def get_n_frames(dfn):
             break
         
     return nVols
+
+def get_dcm_slice_timing(dicom_files):
+# From Satrajit Ghosh's code at: https://github.com/satra/nipype/blob/enh/restingwf/examples/rsfmri_preprocessing.py#L47
+    from dcmstack.extract import default_extractor
+    from dicom import read_file
+    from nipype.utils.filemanip import filename_to_list
+
+    meta = default_extractor(read_file(filename_to_list(dicom_files)[0],
+                                       stop_before_pixels=True,
+                                       force=True))
+    return (meta['RepetitionTime'] / 1000., meta['CsaImage.MosaicRefAcqTimes'],
+            meta['SpacingBetweenSlices'])
