@@ -36,3 +36,30 @@ def get_dcm_slice_timing(dicom_files):
                                        force=True))
     return (meta['RepetitionTime'] / 1000., meta['CsaImage.MosaicRefAcqTimes'],
             meta['SpacingBetweenSlices'])
+
+def flirt_apply_xfm(inImg, refImg, xfmMat, outImg, interpMeth=""):
+    check_file(inImg)
+    check_file(refImg)
+    check_file(xfmMat)
+    
+    cmd = "flirt -in %s -ref %s -applyxfm -init %s -out %s " % \
+          (inImg, refImg, xfmMat, outImg)
+
+    if interpMeth != "":
+        cmd += "-interp %s " % interpMeth
+
+    saydo(cmd)
+    
+    check_file(outImg)
+
+def invert_fsl_xfm_mat(inMatFN, outMatFN):
+    check_bin_path("convert_xfm")
+
+    check_file(inMatFN)
+    
+    cvtCmd = "convert_xfm -omat %s -inverse %s " % (outMatFN, inMatFN)
+    saydo(cvtCmd)
+
+    check_file(outMatFN)
+    
+    
