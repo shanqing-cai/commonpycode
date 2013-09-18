@@ -1,11 +1,56 @@
 import os
 import sys
 
-def saydo(cmd, echo=True):
+def saydo(cmd, echo=True, logFN=None, bLogDate=True):
     if echo:
         print(cmd + '\n')
 
-    os.system(cmd)
+    if logFN == None or logFN == "":
+        os.system(cmd)
+    else:
+        if bLogDate:
+            import datetime
+            dtStr = datetime.datetime.isoformat(datetime.datetime.now())
+
+        logF = open(logFN, "at")
+
+        if bLogDate:
+            logF.write("\nCOMMAND @ %s: %s\n\n" % (dtStr, cmd))
+        else:
+            logF.write("\nCOMMAND: %s\n\n" % cmd)
+            
+        logF.close()
+
+        os.system("%s 2>&1 | tee -a %s" % (cmd, logFN))
+
+def info_log(info, logFN=None):
+    import datetime
+
+    str = "INFO @ %s: %s" \
+            % (datetime.datetime.isoformat(datetime.datetime.now()), info)
+
+    if logFN != None and logFN != "":
+        logF = open(logFN, "at")
+        logF.write("%s\n" % str)
+        logF.close()
+
+    print(str)
+    
+
+def error_log(errInfo, logFN=None):
+    import datetime
+
+    errDTStr = "ERROR @ %s:" \
+               % datetime.datetime.isoformat(datetime.datetime.now())
+
+    if logFN != None and logFN != "":
+        logF = open(logFN, "at")
+        logF.write("\n%s\n" % errDTStr)
+        logF.write("%s\n\n" % errInfo)
+        logF.close()
+
+    print(errDTStr)
+    raise Exception, errInfo
 
 def qsubmit(cmd, queue, jobname):
     os.system('ezsub -c "%s" -q %s -n %s'%(cmd, queue, jobname))
@@ -43,20 +88,20 @@ def read_ctab(ctabfn):
 
     return (roi_nums, roi_names)
 
-def check_file(fn):
+def check_file(fn, logFN=None):
     if not os.path.isfile(fn):
-        raise Exception, "Missing file: %s"%fn
+        error_log("Missing file: %s" % fn, logFN=logFN)
 
-def check_dir(dn, bCreate=False):
+def check_dir(dn, bCreate=False, logFN=None):
     if not os.path.isdir(dn):
         if not bCreate:
-            raise Exception, "Missing directory: %s"%dn
+            error_log("Missing directory: %s" % dn, logFN=logFN)
         else:
-            os.system("mkdir -p %s"%dn)
+            saydo("mkdir -p %s" % dn, logFN=logFN)
             if not os.path.isdir(dn):
-                raise Exception, "Failed to create directory: %s"%dn
+                error_log("Failed to create directory: %s" % dn, logFN=logFN)
             else:
-                print("INFO: Created directory: %s"%dn)
+                info_log("INFO: Created directory: %s"%dn, logFN=logFN)
 
 
 
@@ -94,13 +139,11 @@ def cmd_stdout(cmd):
     return (sout, serr)
 
 
-def check_bin_path(bfn):
+def check_bin_path(bfn, logFN=None):
     (tpath, se) = cmd_stdout("which %s" % bfn)
     assert(len(se) == 0)
     
     if len(tpath) == 0:
-        raise Exception, "Cannot find the path to program: %s" % bfn
+        error_log("Cannot find the path to program: %s" % bfn, logFN=logFN)
 
     return tpath
-
-           
