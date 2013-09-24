@@ -2,15 +2,20 @@ import os
 import sys
 
 def saydo(cmd, echo=True, logFN=None, bLogDate=True):
-    if echo:
-        print(cmd + '\n')
+    if bLogDate:
+        import datetime
+        dtStr = datetime.datetime.isoformat(datetime.datetime.now())
 
+    if echo:
+        if bLogDate:
+            print("Running command @ %s:" % dtStr)
+            print(cmd + '\n')
+        
     if logFN == None or logFN == "":
+        
         os.system(cmd)
     else:
-        if bLogDate:
-            import datetime
-            dtStr = datetime.datetime.isoformat(datetime.datetime.now())
+        
 
         logF = open(logFN, "at")
 
@@ -109,7 +114,7 @@ def check_dir(dn, bCreate=False, logFN=None):
             if not os.path.isdir(dn):
                 error_log("Failed to create directory: %s" % dn, logFN=logFN)
             else:
-                info_log("INFO: Created directory: %s"%dn, logFN=logFN)
+                info_log("Created directory: %s"%dn, logFN=logFN)
 
 
 
