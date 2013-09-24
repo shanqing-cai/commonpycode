@@ -23,25 +23,33 @@ def saydo(cmd, echo=True, logFN=None, bLogDate=True):
 
         os.system("%s 2>&1 | tee -a %s" % (cmd, logFN))
 
-def info_log(info, logFN=None):
+def info_log(info, logFN=None, bWarn=False):
     import datetime
 
-    str = "INFO @ %s: %s" \
-            % (datetime.datetime.isoformat(datetime.datetime.now()), info)
+    if not bWarn:
+        str = "INFO @ %s: %s" \
+              % (datetime.datetime.isoformat(datetime.datetime.now()), info)
+    else:
+        str = "WARNING @ %s: %s" \
+              % (datetime.datetime.isoformat(datetime.datetime.now()), info)
 
     if logFN != None and logFN != "":
         logF = open(logFN, "at")
         logF.write("%s\n" % str)
         logF.close()
 
-    print(str)
+    if not bWarn:
+        print(str)
+    else:
+        print("\033[93m" + str + "\033[0m")
     
 
 def error_log(errInfo, logFN=None):
     import datetime
 
-    errDTStr = "ERROR @ %s:" \
-               % datetime.datetime.isoformat(datetime.datetime.now())
+    errDTStr = "ERROR @ %s: %s" \
+               % (datetime.datetime.isoformat(datetime.datetime.now()), 
+                  errInfo)
 
     if logFN != None and logFN != "":
         logF = open(logFN, "at")
@@ -49,7 +57,7 @@ def error_log(errInfo, logFN=None):
         logF.write("%s\n\n" % errInfo)
         logF.close()
 
-    print(errDTStr)
+    print("\033[91m" + errDTStr + "\033[0m")
     raise Exception, errInfo
 
 def qsubmit(cmd, queue, jobname):
