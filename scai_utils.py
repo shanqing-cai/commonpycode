@@ -160,3 +160,13 @@ def check_bin_path(bfn, logFN=None):
         error_log("Cannot find the path to program: %s" % bfn, logFN=logFN)
 
     return tpath
+
+def check_env_var(envVar, expectVal):
+    import os
+    
+    val = os.getenv(envVar)
+    
+    if val != expectVal:
+        error_log("The value of the environmental variable (%s) does not equal the expected value: %s\n" % (envVar, expectVal) + \
+                  "Under Bash, you can set it to the expected value by\n" + \
+                  "\texport %s=%s" % (envVar, expectVal))
